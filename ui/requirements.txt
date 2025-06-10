@@ -3,5 +3,5 @@ openai==1.59.5
 azure-cognitiveservices-speech==1.40.0
 python-dotenv==1.0.1
 azure-identity==1.19.0
-requests==2.32.3
+requests==2.32.4
 pydub>=0.25.1
