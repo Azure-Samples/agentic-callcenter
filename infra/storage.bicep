@@ -22,12 +22,21 @@ resource blobServices 'Microsoft.Storage/storageAccounts/blobServices@2023-01-01
   name: 'default'
 }
 
-// Cointainer for the storage account
+// Container for the storage account
 resource storageContainer 'Microsoft.Storage/storageAccounts/blobServices/containers@2021-04-01' = {
   name: 'documents'
   parent: blobServices
   properties: {
     publicAccess: 'None'
+  }
+}
+
+// Container for TTS audio files (publicly accessible for Azure CallAutomation)
+resource ttsAudioContainer 'Microsoft.Storage/storageAccounts/blobServices/containers@2021-04-01' = {
+  name: 'tts-audio'
+  parent: blobServices
+  properties: {
+    publicAccess: 'Blob'  // Allow public read access to individual blobs
   }
 }
 
@@ -73,3 +82,4 @@ output storageAccountEndpoint string = storageAccount.properties.primaryEndpoint
 #disable-next-line outputs-should-not-contain-secrets
 output storageAccountConnectionString string = storageAccount.listKeys().keys[0].value
 output storageContainerName string = storageContainer.name
+output ttsAudioContainerName string = ttsAudioContainer.name

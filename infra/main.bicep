@@ -203,6 +203,8 @@ output AZURE_OPENAI_EMBEDDING_MODEL string = embeddingModel
 output AZURE_STORAGE_ENDPOINT string = storage.outputs.storageAccountEndpoint
 output AZURE_STORAGE_CONNECTION_STRING string = 'ResourceId=/subscriptions/${subscription().subscriptionId}/resourceGroups/${rg.name}/providers/Microsoft.Storage/storageAccounts/${storage.outputs.storageAccountName}'
 output AZURE_STORAGE_CONTAINER string = storage.outputs.storageContainerName
+output AZURE_STORAGE_ACCOUNT_NAME string = storage.outputs.storageAccountName
+output AZURE_STORAGE_TTS_CONTAINER string = storage.outputs.ttsAudioContainerName
 output APPLICATIONINSIGHTS_CONNECTIONSTRING string = appin.outputs.applicationInsightsConnectionString
 output COSMOSDB_ENDPOINT string = cosmosdb.outputs.cosmosDbEndpoint
 output COSMOSDB_DATABASE string = cosmosdb.outputs.cosmosDbDatabase

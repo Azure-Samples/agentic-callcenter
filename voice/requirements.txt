@@ -5,3 +5,5 @@ azure-identity
 azure-communication-callautomation
 azure-eventgrid
 aiohttp
+elevenlabs==1.45.0
+azure-storage-blob

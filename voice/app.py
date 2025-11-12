@@ -57,7 +57,8 @@ from azure.communication.callautomation import (
     PhoneNumberIdentifier,
     RecognizeInputType,
     TextSource,
-    SsmlSource
+    SsmlSource,
+    FileSource
     )
 
 from azure.communication.callautomation.aio import (
@@ -65,6 +66,10 @@ from azure.communication.callautomation.aio import (
     )
 call_automation_client = CallAutomationClient(endpoint=os.getenv("ACS_ENDPOINT"), credential=DefaultAzureCredential())
 COGNITIVE_SERVICE_ENDPOINT = os.getenv("COGNITIVE_SERVICE_ENDPOINT")
+
+# Initialize ElevenLabs TTS client
+from elevenlabs_utils import get_tts_client
+tts_client = get_tts_client()
 
 @app.post("/api/call")
 async def incoming_call_handler(req: Request):
@@ -122,21 +127,31 @@ async def incoming_call_handler(req: Request):
 VOICE_NAME = os.getenv("VOICE_NAME", "en-US-AvaMultilingualNeural")
 async def reply_and_wait(replyText, callerId, call_connection_id, context=""):
     try:
-        logger.debug("Replying and waiting: %s", replyText)        
+        logger.debug("Replying and waiting: %s", replyText)
         connection_client = call_automation_client.get_call_connection(call_connection_id)
-        ssmlToPlay = f'<speak version="1.0" xmlns="http://www.w3.org/2001/10/synthesis" xml:lang="en-US"><voice name="{VOICE_NAME}">{replyText}</voice></speak>'
-        await connection_client.start_recognizing_media( 
+
+        # Generate audio with ElevenLabs and upload to blob storage
+        play_source = None
+        if replyText != "":
+            audio_url = tts_client.synthesize_to_blob_url(replyText)
+            play_source = FileSource(url=audio_url)
+
+        await connection_client.start_recognizing_media(
             input_type=RecognizeInputType.SPEECH,
-            target_participant=PhoneNumberIdentifier(callerId), 
+            target_participant=PhoneNumberIdentifier(callerId),
             end_silence_timeout=1, # The final pause of the speaker used to detect the final result that gets generated as speech.
-            play_prompt=SsmlSource(ssml_text=ssmlToPlay) if replyText != "" else None,
+            play_prompt=play_source,
             operation_context=context)
     except Exception as ex:
         logger.error("Error in recognize: %s", ex)
 
 async def play_message(call_connection_id, text_to_play, context):
     logger.debug("Playing message: %s", text_to_play)
-    play_source = TextSource(text=text_to_play, voice_name=VOICE_NAME) 
+
+    # Generate audio with ElevenLabs and upload to blob storage
+    audio_url = tts_client.synthesize_to_blob_url(text_to_play)
+    play_source = FileSource(url=audio_url)
+
     await call_automation_client.get_call_connection(call_connection_id).play_media_to_all(
         play_source,
         operation_context=context)

@@ -222,32 +222,37 @@ def speech_to_text(audio_file):
 # @cl.step(type="tool")
 async def text_to_speech(text: str, mime_type: str):
     import os
-    import azure.cognitiveservices.speech as speechsdk
- 
-    # This example requires environment variables named "SPEECH_KEY" and "SPEECH_REGION"
-    speech_config = speechsdk.SpeechConfig(subscription=os.getenv('SPEECH_KEY'), region=os.getenv("SPEECH_REGION"))
-    audio_config = speechsdk.audio.AudioOutputConfig(use_default_speaker=True)
- 
-    # The neural multilingual voice can speak different languages based on the input text.
-    speech_config.speech_synthesis_voice_name='en-US-AvaMultilingualNeural'
- 
+    from elevenlabs import ElevenLabs
+
+    # Initialize ElevenLabs client
+    client = ElevenLabs(api_key=os.getenv('ELEVENLABS_API_KEY'))
+
+    voice_id = os.getenv('ELEVENLABS_VOICE_ID', 'Rachel')  # Default to Rachel voice
+    model = os.getenv('ELEVENLABS_MODEL', 'eleven_turbo_v2_5')
+
     filename = "./.files/ai.wav"
-    audio_config = speechsdk.audio.AudioOutputConfig(filename=filename)
- 
-    speech_synthesizer = speechsdk.SpeechSynthesizer(speech_config=speech_config, audio_config=audio_config)
-    speech_synthesis_result = speech_synthesizer.speak_text_async(text).get()
-    # stream = speechsdk.AudioDataStream(speech_synthesis_result)
- 
-    if speech_synthesis_result.reason == speechsdk.ResultReason.SynthesizingAudioCompleted:
-        print("Speech synthesized for text [{}]".format(text))
-    elif speech_synthesis_result.reason == speechsdk.ResultReason.Canceled:
-        cancellation_details = speech_synthesis_result.cancellation_details
-        print("Speech synthesis canceled: {}".format(cancellation_details.reason))
-        if cancellation_details.reason == speechsdk.CancellationReason.Error:
-            if cancellation_details.error_details:
-                print("Error details: {}".format(cancellation_details.error_details))
-                print("Did you set the speech resource key and region values?")
-   
+
+    try:
+        # Generate speech using ElevenLabs
+        audio_generator = client.text_to_speech.convert(
+            text=text,
+            voice_id=voice_id,
+            model_id=model,
+            output_format="mp3_44100_128"
+        )
+
+        # Save the audio to a file
+        with open(filename, "wb") as audio_file:
+            for chunk in audio_generator:
+                audio_file.write(chunk)
+
+        logger.info(f"Speech synthesized for text: {text[:50]}...")
+
+    except Exception as e:
+        logger.error(f"ElevenLabs TTS error: {e}")
+        logger.error("Did you set the ELEVENLABS_API_KEY and ELEVENLABS_VOICE_ID?")
+        raise
+
     return "audio", filename
 
 @cl.on_audio_start
