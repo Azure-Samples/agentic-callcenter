@@ -253,7 +253,7 @@ async def text_to_speech(text: str, mime_type: str):
 
     except Exception as e:
         logger.error(f"ElevenLabs TTS error: {e}")
-        logger.error("Did you set the ELEVENLABS_API_KEY and ELEVENLABS_VOICE_ID?")
+        logger.error("Did you set the ELEVENLABS_API_KEY environment variable?")
         raise
 
     return "audio", filename
