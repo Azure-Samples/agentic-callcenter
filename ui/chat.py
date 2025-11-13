@@ -227,7 +227,10 @@ async def text_to_speech(text: str, mime_type: str):
     # Initialize ElevenLabs client
     client = ElevenLabs(api_key=os.getenv('ELEVENLABS_API_KEY'))
 
-    voice_id = os.getenv('ELEVENLABS_VOICE_ID', 'Rachel')  # Default to Rachel voice
+    voice_id = os.getenv('ELEVENLABS_VOICE_ID')
+    if not voice_id:
+        logger.error("ELEVENLABS_VOICE_ID environment variable is not set. Please provide a valid ElevenLabs voice ID from your account.")
+        raise ValueError("ELEVENLABS_VOICE_ID environment variable is required for ElevenLabs TTS.")
     model = os.getenv('ELEVENLABS_MODEL', 'eleven_turbo_v2_5')
 
     filename = "./.files/ai.wav"
