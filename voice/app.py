@@ -124,7 +124,6 @@ async def incoming_call_handler(req: Request):
         logger.error(f"Error in incoming_call_handler: {ex}")
         return JSONResponse(status_code=500, content=str(ex))
 
-VOICE_NAME = os.getenv("VOICE_NAME", "en-US-AvaMultilingualNeural")
 async def reply_and_wait(replyText, callerId, call_connection_id, context=""):
     try:
         logger.debug("Replying and waiting: %s", replyText)
