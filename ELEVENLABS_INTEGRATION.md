@@ -140,14 +140,21 @@ pip install -r requirements.txt
 
 ### Voice IDs
 
-Common voice IDs include:
-- `Rachel` - Professional female voice
-- `Bella` - Warm female voice
-- `Antoni` - Professional male voice
-- `Josh` - Casual male voice
+**Important:** ElevenLabs API requires the use of *voice IDs*, which are long alphanumeric strings, not the voice names.
 
-You can find all available voices in the ElevenLabs dashboard.
+For example, here are some common voices and their corresponding IDs:
+- `Rachel` (Professional female voice): `21m00Tcm4TlvDq8ikWAM`
+- `Bella` (Warm female voice): `EXAVITQu4vr4xnSDxMaL`
+- `Antoni` (Professional male voice): `ErXwobaYiN019PkySvjV`
+- `Josh` (Casual male voice): `TxGEqnHWrfWFTfGW9XjX`
 
+**How to find your voice ID:**  
+1. Log in to your ElevenLabs dashboard.  
+2. Go to the "Voices" section.  
+3. Click on a voice to view its details.  
+4. Copy the alphanumeric voice ID shown in the URL or details panel.
+
+Do **not** use the voice name (e.g., "Rachel") as the ID in API calls—this will cause errors.
 ## Cost Considerations
 
 ### ElevenLabs Pricing
