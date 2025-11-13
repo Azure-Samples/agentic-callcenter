@@ -31,7 +31,9 @@ class ElevenLabsTTS:
             raise ValueError("ElevenLabs API key not provided. Set ELEVENLABS_API_KEY environment variable.")
 
         self.client = ElevenLabs(api_key=self.api_key)
-        self.voice_id = os.getenv('ELEVENLABS_VOICE_ID', 'Rachel')
+        self.voice_id = os.getenv('ELEVENLABS_VOICE_ID')
+        if not self.voice_id:
+            raise ValueError("ELEVENLABS_VOICE_ID environment variable is required and must be set to a valid ElevenLabs voice ID.")
         self.model = os.getenv('ELEVENLABS_MODEL', 'eleven_turbo_v2_5')
 
         # Azure Blob Storage configuration
