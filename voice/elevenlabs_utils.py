@@ -156,10 +156,10 @@ class ElevenLabsTTS:
             )
 
             # Collect all chunks into bytes
-            audio_bytes = b''
+            chunks = []
             for chunk in audio_generator:
-                audio_bytes += chunk
-
+                chunks.append(chunk)
+            audio_bytes = b''.join(chunks)
             logger.info(f"Speech synthesized successfully ({len(audio_bytes)} bytes)")
 
             # Upload to blob storage
