@@ -233,7 +233,7 @@ async def text_to_speech(text: str, mime_type: str):
         raise ValueError("ELEVENLABS_VOICE_ID environment variable is required for ElevenLabs TTS.")
     model = os.getenv('ELEVENLABS_MODEL', 'eleven_turbo_v2_5')
 
-    filename = "./.files/ai.wav"
+    filename = "./.files/ai.mp3"
 
     try:
         # Generate speech using ElevenLabs
