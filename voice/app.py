@@ -131,7 +131,7 @@ async def reply_and_wait(replyText, callerId, call_connection_id, context=""):
 
         # Generate audio with ElevenLabs and upload to blob storage
         play_source = None
-        if replyText != "":
+        if replyText and replyText.strip():
             audio_url = tts_client.synthesize_to_blob_url(replyText)
             play_source = FileSource(url=audio_url)
 
